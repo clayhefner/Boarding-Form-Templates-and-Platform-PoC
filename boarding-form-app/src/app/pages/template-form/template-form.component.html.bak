@@ -1,0 +1,726 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-title-section">
+        <h1>{{ pageTitle }}</h1>
+        <div class="template-info" *ngIf="isEditMode">
+          <span class="template-id">ID: {{ templateId }}</span>
+          <span class="template-name">{{ currentTemplateName }}</span>
+        </div>
+      </div>
+      <span class="unsaved-indicator" *ngIf="hasUnsavedChanges">
+        <span nz-icon nzType="exclamation-circle" nzTheme="fill"></span>
+        Unsaved changes
+      </span>
+    </div>
+    <div class="header-actions">
+      <button nz-button nzType="default" (click)="togglePreview()">
+        <span nz-icon [nzType]="showPreview ? 'eye-invisible' : 'eye'"></span>
+        {{ showPreview ? 'Hide' : 'Show' }} Preview
+      </button>
+      <button nz-button nzType="default" (click)="onCancel()">
+        Cancel
+      </button>
+      <button nz-button nzType="primary" (click)="onSave()" [nzLoading]="isSaving">
+        <span nz-icon nzType="save" *ngIf="!isSaving"></span>
+        Save Template
+      </button>
+    </div>
+  </div>
+
+  <div class="form-content">
+    <div class="split-layout" [class.preview-hidden]="!showPreview">
+      <!-- Left: Form Editor -->
+      <div class="form-editor">
+        <form nz-form [formGroup]="templateForm" nzLayout="vertical">
+
+          <!-- Basic Information Section -->
+          <nz-card nzTitle="Basic Information" [nzBordered]="true" class="form-section">
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="name">Template Name</nz-form-label>
+                  <nz-form-control nzErrorTip="Please enter template name">
+                    <input nz-input id="name" formControlName="name" placeholder="Enter template name" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Type</nz-form-label>
+                  <nz-form-control>
+                    <nz-select formControlName="type" nzPlaceHolder="Select type">
+                      <nz-option nzValue="KYC" nzLabel="KYC"></nz-option>
+                      <nz-option nzValue="RFI" nzLabel="RFI"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Domain</nz-form-label>
+                  <nz-form-control>
+                    <nz-select formControlName="domain" nzPlaceHolder="Select domain" nzShowSearch>
+                      <nz-option *ngFor="let domain of domainOptions" [nzValue]="domain.value" [nzLabel]="domain.label"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label>MCC Codes</nz-form-label>
+                  <nz-form-control nzExtra="Select one or more Merchant Category Codes">
+                    <nz-select
+                      formControlName="mccCodes"
+                      nzMode="multiple"
+                      nzPlaceHolder="Select MCC codes"
+                      nzShowSearch
+                      nzAllowClear>
+                      <nz-option *ngFor="let mcc of mccCodeOptions" [nzValue]="mcc.code" [nzLabel]="mcc.label"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Heading Configuration Section -->
+          <nz-card nzTitle="Heading Configuration" [nzBordered]="true" class="form-section">
+            <div formGroupName="heading">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Title</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter title">
+                      <input nz-input formControlName="title" placeholder="Enter heading title" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Title Color</nz-form-label>
+                    <nz-form-control>
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="titleColor" class="color-input" />
+                        <input nz-input formControlName="titleColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Accent Color</nz-form-label>
+                    <nz-form-control>
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="accentColor" class="color-input" />
+                        <input nz-input formControlName="accentColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Logo</nz-form-label>
+                    <nz-form-control nzExtra="Maximum dimensions: 250x100 pixels. Supports PNG and JPG formats.">
+                      <div class="logo-upload-section">
+                        <nz-upload
+                          *ngIf="!uploadedLogoUrl"
+                          nzType="drag"
+                          [nzBeforeUpload]="beforeLogoUpload"
+                          [nzCustomRequest]="customUploadRequest"
+                          [nzShowUploadList]="false"
+                          nzAccept="image/png,image/jpeg,image/jpg">
+                          <p class="ant-upload-drag-icon">
+                            <span nz-icon nzType="inbox"></span>
+                          </p>
+                          <p class="ant-upload-text">Click or drag image to upload</p>
+                          <p class="ant-upload-hint">Support PNG and JPG formats</p>
+                        </nz-upload>
+
+                        <div *ngIf="uploadedLogoUrl" class="logo-preview-card">
+                          <div class="logo-preview-image">
+                            <img [src]="uploadedLogoUrl" alt="Logo preview" />
+                          </div>
+                          <div class="logo-preview-info">
+                            <div class="logo-file-name">
+                              <span nz-icon nzType="file-image" nzTheme="outline"></span>
+                              {{ uploadedLogoFileName }}
+                            </div>
+                            <button nz-button nzType="text" nzDanger (click)="removeLogo()">
+                              <span nz-icon nzType="delete"></span>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Button Configuration Section -->
+          <nz-card nzTitle="Button Configuration" [nzBordered]="true" class="form-section">
+            <div formGroupName="button">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Text Color</nz-form-label>
+                    <nz-form-control>
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="textColor" class="color-input" />
+                        <input nz-input formControlName="textColor" placeholder="#edf0f5" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Button Accent Color</nz-form-label>
+                    <nz-form-control>
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="accentColor" class="color-input" />
+                        <input nz-input formControlName="accentColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Settings Section -->
+          <nz-card nzTitle="Settings" [nzBordered]="true" class="form-section">
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label>Return URL</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="returnUrl" placeholder="www.example.com" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label>Expiration URL</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="expirationUrl" placeholder="www.example.com/expired" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label>Terms of Service URL</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="tosUrl" placeholder="www.example.com/tos" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Expiration (Hours)</nz-form-label>
+                  <nz-form-control>
+                    <nz-input-number formControlName="expirationInHours" [nzMin]="1" [nzMax]="720" style="width: 100%;"></nz-input-number>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <nz-divider></nz-divider>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>Display Terms of Service</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="displayTos"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>Display New User Login</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="displayNewUserLogin"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>Auto Transmit Data</nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="autoTransmitMerchantData"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Support Section -->
+          <nz-card nzTitle="Support Information" [nzBordered]="true" class="form-section">
+            <div formGroupName="support">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support Email</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="email" placeholder="support@example.com" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support Phone</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="phone" placeholder="+1 (555) 123-4567" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support URL</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="url" placeholder="www.example.com/support" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support Text</nz-form-label>
+                    <nz-form-control>
+                      <textarea nz-input formControlName="text" placeholder="Additional support information" rows="4"></textarea>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Admin Only Custom Form Fields Sections -->
+          <ng-container *ngIf="isAdminMode" formGroupName="customFormFields">
+            <!-- Custom Form Fields - Business Info -->
+            <nz-card [nzBordered]="true" class="form-section admin-section" [nzTitle]="customBusinessInfoTitle">
+              <ng-template #customBusinessInfoTitle>
+                <span class="admin-section-title">
+                  <span nz-icon nzType="lock" nzTheme="fill" class="admin-icon"></span>
+                  Custom Form Fields - Business Info
+                  <nz-badge nzText="Admin Only" [nzStyle]="{ backgroundColor: '#4013BE' }" class="admin-badge"></nz-badge>
+                </span>
+              </ng-template>
+              <div formGroupName="businessInfo">
+                <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                <div formGroupName="fields">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="name">
+                      <nz-form-item>
+                        <nz-form-label>Business Name</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="phone">
+                      <nz-form-item>
+                        <nz-form-label>Phone</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="website">
+                      <nz-form-item>
+                        <nz-form-label>Website</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.fields.website.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="tin">
+                      <nz-form-item>
+                        <nz-form-label>TIN</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.fields.tin.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="tinType">
+                      <nz-form-item>
+                        <nz-form-label>TIN Type</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.fields.tinType.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="businessType">
+                      <nz-form-item>
+                        <nz-form-label>Business Type</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.fields.businessType.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="mcc">
+                      <nz-form-item>
+                        <nz-form-label>MCC</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.fields.mcc.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div formGroupName="attachments">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="determinationLetter501c3">
+                      <nz-form-item>
+                        <nz-form-label>501(c)(3) Determination Letter</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.attachments.determinationLetter501c3.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" formGroupName="form990">
+                      <nz-form-item>
+                        <nz-form-label>Form 990</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.businessInfo.attachments.form990.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Custom Form Fields - Owners -->
+            <nz-card [nzBordered]="true" class="form-section admin-section" [nzTitle]="customOwnersTitle">
+              <ng-template #customOwnersTitle>
+                <span class="admin-section-title">
+                  <span nz-icon nzType="lock" nzTheme="fill" class="admin-icon"></span>
+                  Custom Form Fields - Owners
+                  <nz-badge nzText="Admin Only" [nzStyle]="{ backgroundColor: '#4013BE' }" class="admin-badge"></nz-badge>
+                </span>
+              </ng-template>
+              <div formGroupName="owners">
+                <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                <div formGroupName="fields">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="firstName">
+                      <nz-form-item>
+                        <nz-form-label>First Name</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.firstName.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="lastName">
+                      <nz-form-item>
+                        <nz-form-label>Last Name</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.lastName.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="email">
+                      <nz-form-item>
+                        <nz-form-label>Email</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.email.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="phone">
+                      <nz-form-item>
+                        <nz-form-label>Phone</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.phone.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="dob">
+                      <nz-form-item>
+                        <nz-form-label>Date of Birth</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.dob.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="ssn">
+                      <nz-form-item>
+                        <nz-form-label>SSN</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.ssn.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="ownershipPercent">
+                      <nz-form-item>
+                        <nz-form-label>Ownership Percent</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.fields.ownershipPercent.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div formGroupName="attachments">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="8" formGroupName="id">
+                      <nz-form-item>
+                        <nz-form-label>ID</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.attachments.id.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="idFront">
+                      <nz-form-item>
+                        <nz-form-label>ID Front</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.attachments.idFront.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" formGroupName="idBack">
+                      <nz-form-item>
+                        <nz-form-label>ID Back</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.owners.attachments.idBack.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Custom Form Fields - Banking -->
+            <nz-card [nzBordered]="true" class="form-section admin-section" [nzTitle]="customBankingTitle">
+              <ng-template #customBankingTitle>
+                <span class="admin-section-title">
+                  <span nz-icon nzType="lock" nzTheme="fill" class="admin-icon"></span>
+                  Custom Form Fields - Banking
+                  <nz-badge nzText="Admin Only" [nzStyle]="{ backgroundColor: '#4013BE' }" class="admin-badge"></nz-badge>
+                </span>
+              </ng-template>
+              <div formGroupName="banking">
+                <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                <div formGroupName="fields">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="account">
+                      <nz-form-item>
+                        <nz-form-label>Account Number</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.fields.account.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" formGroupName="routing">
+                      <nz-form-item>
+                        <nz-form-label>Routing Number</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.fields.routing.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="accountType">
+                      <nz-form-item>
+                        <nz-form-label>Account Type</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.fields.accountType.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" formGroupName="accountName">
+                      <nz-form-item>
+                        <nz-form-label>Account Name</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.fields.accountName.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div formGroupName="attachments">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="bankStatement">
+                      <nz-form-item>
+                        <nz-form-label>Bank Statement</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.attachments.bankStatement.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" formGroupName="voidedCheck">
+                      <nz-form-item>
+                        <nz-form-label>Voided Check</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.banking.attachments.voidedCheck.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Custom Form Fields - Attachments -->
+            <nz-card [nzBordered]="true" class="form-section admin-section" [nzTitle]="customAttachmentsTitle">
+              <ng-template #customAttachmentsTitle>
+                <span class="admin-section-title">
+                  <span nz-icon nzType="lock" nzTheme="fill" class="admin-icon"></span>
+                  Custom Form Fields - Attachments
+                  <nz-badge nzText="Admin Only" [nzStyle]="{ backgroundColor: '#4013BE' }" class="admin-badge"></nz-badge>
+                </span>
+              </ng-template>
+              <div formGroupName="attachments">
+                <div formGroupName="attachments">
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="businessLicense">
+                      <nz-form-item>
+                        <nz-form-label>Business License</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.attachments.attachments.businessLicense.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" formGroupName="ss4">
+                      <nz-form-item>
+                        <nz-form-label>SS-4</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.attachments.attachments.ss4.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div nz-row [nzGutter]="16">
+                    <div nz-col [nzSpan]="12" formGroupName="articlesOfIncorporation">
+                      <nz-form-item>
+                        <nz-form-label>Articles of Incorporation</nz-form-label>
+                        <nz-form-control>
+                          <nz-switch formControlName="display"></nz-switch>
+                          <span style="margin-left: 8px; color: #8c8c8c;">{{ templateForm.get('customFormFields.attachments.attachments.articlesOfIncorporation.display')?.value ? 'Show' : 'Hide' }}</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+          </ng-container>
+
+        </form>
+      </div>
+
+      <!-- Right: Live Preview Panel -->
+      <div class="preview-panel" *ngIf="showPreview">
+        <div class="preview-header">
+          <h3>
+            <span nz-icon nzType="eye"></span>
+            Live Preview
+          </h3>
+        </div>
+        <div class="preview-content">
+          <div class="preview-form" [style.border-top]="'4px solid ' + previewAccentColor">
+            <div class="preview-logo-section">
+              <div class="preview-logo-placeholder" *ngIf="!templateForm.get('heading.logo')?.value">
+                <span nz-icon nzType="picture" style="font-size: 32px;"></span>
+              </div>
+              <img *ngIf="templateForm.get('heading.logo')?.value" [src]="templateForm.get('heading.logo')?.value" alt="Logo" class="preview-logo" />
+            </div>
+
+            <h1 class="preview-title" [style.color]="previewTitleColor">
+              {{ previewTitle }}
+            </h1>
+
+            <div class="preview-form-body">
+              <div class="preview-field">
+                <label>Sample Field</label>
+                <input type="text" placeholder="This is how inputs will look" />
+              </div>
+
+              <div class="preview-field">
+                <label>Another Field</label>
+                <input type="text" placeholder="Enter text here" />
+              </div>
+
+              <button class="preview-button" [style.background-color]="previewButtonAccentColor" [style.color]="previewButtonTextColor">
+                Submit Button Preview
+              </button>
+            </div>
+
+            <div class="preview-footer">
+              <small>Form preview - colors and branding update in real-time</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1696 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-title-section">
+        <h1>{{ pageTitle }}</h1>
+        <div class="template-info" *ngIf="isEditMode">
+          <span class="template-id">ID: {{ templateId }}</span>
+          <span class="template-name">{{ currentTemplateName }}</span>
+        </div>
+      </div>
+      <span class="unsaved-indicator" *ngIf="hasUnsavedChanges">
+        <span nz-icon nzType="exclamation-circle" nzTheme="fill"></span>
+        Unsaved changes
+      </span>
+    </div>
+    <div class="header-actions">
+      <button nz-button nzType="default" (click)="togglePreview()">
+        <span nz-icon [nzType]="showPreview ? 'eye-invisible' : 'eye'"></span>
+        {{ showPreview ? 'Hide' : 'Show' }} Preview
+      </button>
+      <button nz-button nzType="default" (click)="onCancel()">
+        Cancel
+      </button>
+      <button nz-button nzType="primary" (click)="onSave()" [nzLoading]="isSaving">
+        <span nz-icon nzType="save" *ngIf="!isSaving"></span>
+        Save Template
+      </button>
+    </div>
+  </div>
+
+  <div class="form-content">
+    <div class="split-layout" [class.preview-hidden]="!showPreview">
+      <!-- Left: Form Editor -->
+      <div class="form-editor">
+        <form nz-form [formGroup]="templateForm" nzLayout="vertical">
+
+          <!-- Basic Information Section -->
+          <nz-card nzTitle="Basic Information" [nzBordered]="true" class="form-section">
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="name">Template Name</nz-form-label>
+                  <nz-form-control nzErrorTip="Please enter template name">
+                    <input nz-input id="name" formControlName="name" placeholder="Enter template name" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>
+                    Type
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Form type: KYC (Know Your Customer) for initial onboarding, or RFI (Request for Information) to collect additional merchant data"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-select formControlName="type" nzPlaceHolder="Select type">
+                      <nz-option nzValue="KYC" nzLabel="KYC"></nz-option>
+                      <nz-option nzValue="RFI" nzLabel="RFI"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                  <nz-form-label nzRequired>
+                    Domain
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="The domain where this boarding form will be hosted and accessed by users"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-select formControlName="domain" nzPlaceHolder="Select domain" nzShowSearch>
+                      <nz-option *ngFor="let domain of domainOptions" [nzValue]="domain.value" [nzLabel]="domain.label"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label>
+                    MCC Codes
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Merchant Category Codes that classify the type of business. Select one or more codes that apply to this form template"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control nzExtra="Select one or more Merchant Category Codes">
+                    <nz-select
+                      formControlName="mccCodes"
+                      nzMode="multiple"
+                      nzPlaceHolder="Select MCC codes"
+                      nzShowSearch
+                      nzAllowClear>
+                      <nz-option *ngFor="let mcc of mccCodeOptions" [nzValue]="mcc.code" [nzLabel]="mcc.label"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Appearance Section -->
+          <nz-card nzTitle="Appearance" [nzBordered]="true" class="form-section">
+            <h4 class="section-header">Heading</h4>
+            <div formGroupName="heading">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Title</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter title">
+                      <input nz-input formControlName="title" placeholder="Enter heading title" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Title Color</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select a title color">
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="titleColor" class="color-input" />
+                        <input nz-input formControlName="titleColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Accent Color</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select an accent color">
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="accentColor" class="color-input" />
+                        <input nz-input formControlName="accentColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Logo</nz-form-label>
+                    <nz-form-control nzExtra="Maximum dimensions: 250x100 pixels. Supports PNG and JPG formats.">
+                      <div class="logo-upload-section">
+                        <nz-upload
+                          *ngIf="!uploadedLogoUrl"
+                          nzType="drag"
+                          [nzBeforeUpload]="beforeLogoUpload"
+                          [nzCustomRequest]="customUploadRequest"
+                          [nzShowUploadList]="false"
+                          nzAccept="image/png,image/jpeg,image/jpg">
+                          <p class="ant-upload-drag-icon">
+                            <span nz-icon nzType="inbox"></span>
+                          </p>
+                          <p class="ant-upload-text">Click or drag image to upload</p>
+                          <p class="ant-upload-hint">Support PNG and JPG formats</p>
+                        </nz-upload>
+
+                        <div *ngIf="uploadedLogoUrl" class="logo-preview-card">
+                          <div class="logo-preview-image">
+                            <img [src]="uploadedLogoUrl" alt="Logo preview" />
+                          </div>
+                          <div class="logo-preview-info">
+                            <div class="logo-file-name">
+                              <span nz-icon nzType="file-image" nzTheme="outline"></span>
+                              {{ uploadedLogoFileName }}
+                            </div>
+                            <button nz-button nzType="text" nzDanger (click)="removeLogo()">
+                              <span nz-icon nzType="delete"></span>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+
+            <nz-divider></nz-divider>
+
+            <h4 class="section-header">Button</h4>
+            <div formGroupName="button">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Button Text Color</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select a button text color">
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="textColor" class="color-input" />
+                        <input nz-input formControlName="textColor" placeholder="#edf0f5" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Button Accent Color</nz-form-label>
+                    <nz-form-control nzErrorTip="Please select a button accent color">
+                      <div class="color-picker-wrapper">
+                        <input nz-input type="color" formControlName="accentColor" class="color-input" />
+                        <input nz-input formControlName="accentColor" placeholder="#4014be" class="hex-input" />
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Form Behavior Section -->
+          <nz-card nzTitle="Form Behavior" [nzBordered]="true" class="form-section">
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Return URL</nz-form-label>
+                  <nz-form-control nzErrorTip="Please enter a valid URL (e.g., https://example.com)">
+                    <input nz-input formControlName="returnUrl" placeholder="https://www.example.com" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label nzRequired>Expired Session URL</nz-form-label>
+                  <nz-form-control nzErrorTip="Please enter a valid URL (e.g., https://example.com/expired)">
+                    <input nz-input formControlName="expirationUrl" placeholder="https://www.example.com/expired" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="24">
+                <nz-form-item>
+                  <nz-form-label>Terms and Conditions URL</nz-form-label>
+                  <nz-form-control nzErrorTip="Please enter a valid URL (e.g., https://example.com/tos)">
+                    <input nz-input formControlName="tosUrl" placeholder="https://www.example.com/tos" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label nzRequired>
+                    Expiration (Hours)
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Number of hours before the form link expires. After expiration, users will not be able to access or submit the form (1-720 hours)"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-input-number formControlName="expirationInHours" [nzMin]="1" [nzMax]="720" style="width: 100%;"></nz-input-number>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <nz-divider></nz-divider>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>
+                    Display Terms of Service
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Show terms of service acceptance checkbox on the form. Users must accept before submitting"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="displayTos" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>
+                    Display New User Login
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Display login credentials section for new users on the completion page after form submission"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="displayNewUserLogin" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label>
+                    Auto Transmit Data
+                    <span nz-icon nzType="info-circle" nzTheme="fill"
+                          nz-tooltip
+                          nzTooltipTitle="Automatically send merchant data to the connection upon form completion. For KYC forms, this will attempt to onboard the merchant. For RFI forms, this will update existing merchant data"
+                          style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                  </nz-form-label>
+                  <nz-form-control>
+                    <nz-switch formControlName="autoTransmitMerchantData" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Support Section -->
+          <nz-card nzTitle="Support Information" [nzBordered]="true" class="form-section">
+            <div formGroupName="support">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support Email</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter a valid email address">
+                      <input nz-input formControlName="email" placeholder="support@example.com" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Support Phone</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter a valid phone number">
+                      <input nz-input formControlName="phone" placeholder="+1 (555) 123-4567" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Support URL</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter a valid URL (e.g., https://example.com/support)">
+                      <input nz-input formControlName="url" placeholder="https://www.example.com/support" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Support Text</nz-form-label>
+                    <nz-form-control>
+                      <textarea nz-input formControlName="text" placeholder="Additional support information" rows="6"></textarea>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+          </nz-card>
+
+          <!-- Admin Only Quick Setup Section -->
+          <ng-container *ngIf="isAdminMode">
+            <nz-card [nzBordered]="true" class="form-section quick-setup-section">
+              <div class="quick-setup-header">
+                <div class="quick-setup-icon">
+                  <span nz-icon nzType="thunderbolt" nzTheme="fill" style="color: #4013BE; font-size: 24px;"></span>
+                </div>
+                <div class="quick-setup-content">
+                  <h3 style="margin: 0 0 4px 0; font-size: 18px; font-weight: 600; color: #262626;">Quick Setup</h3>
+                  <p style="margin: 0; color: #8c8c8c; font-size: 14px;">Select a connection type to auto-configure custom form fields with recommended settings</p>
+                </div>
+              </div>
+
+              <div class="connection-presets">
+                <div
+                  *ngFor="let preset of connectionPresets"
+                  class="preset-card"
+                  [class.preset-selected]="selectedPresetId === preset.id"
+                  (click)="selectPreset(preset.id)">
+                  <div class="preset-radio">
+                    <span nz-icon [nzType]="selectedPresetId === preset.id ? 'check-circle' : 'border'" [nzTheme]="selectedPresetId === preset.id ? 'fill' : 'outline'" [style.color]="selectedPresetId === preset.id ? '#4013BE' : '#d9d9d9'" style="font-size: 20px;"></span>
+                  </div>
+                  <div class="preset-info">
+                    <div class="preset-name">{{ preset.name }}</div>
+                    <div class="preset-description">{{ preset.description }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-setup-actions" *ngIf="selectedPresetId && selectedPresetId !== 'custom'">
+                <button nz-button nzType="primary" nzSize="large" (click)="applyPreset()">
+                  <span nz-icon nzType="check-circle"></span>
+                  Apply {{ getSelectedPresetName() }} Configuration
+                </button>
+                <nz-alert
+                  nzType="info"
+                  nzMessage="This will update custom form field visibility and helper text. You can still customize individual fields afterwards."
+                  nzShowIcon
+                  style="margin-top: 12px;">
+                </nz-alert>
+              </div>
+            </nz-card>
+          </ng-container>
+
+          <!-- Admin Only Custom Form Fields Sections -->
+          <ng-container *ngIf="isAdminMode" formGroupName="customFormFields">
+            <nz-card [nzBordered]="true" class="form-section admin-section" [nzTitle]="customFieldsTitle">
+              <ng-template #customFieldsTitle>
+                <span class="admin-section-title">
+                  <span nz-icon nzType="lock" nzTheme="fill" class="admin-icon"></span>
+                  Custom Form Fields
+                  <nz-badge nzText="Admin Only" [nzStyle]="{ backgroundColor: '#4013BE' }" class="admin-badge"></nz-badge>
+                </span>
+              </ng-template>
+
+              <nz-collapse [nzAccordion]="false" [nzBordered]="false">
+                <!-- Business Info Panel -->
+                <nz-collapse-panel [nzHeader]="businessInfoHeader" [nzActive]="!collapsedSections.has('businessInfo')" [nzExtra]="businessInfoExtra" (nzActiveChange)="toggleSection('businessInfo')">
+                  <ng-template #businessInfoHeader>
+                    <span nz-icon nzType="shop" style="margin-right: 8px;"></span>
+                    Business Information Fields
+                  </ng-template>
+                  <ng-template #businessInfoExtra>
+                    <span style="color: #8c8c8c; font-size: 13px;">{{ getEnabledFieldCount(['customFormFields', 'businessInfo']) }} enabled</span>
+                  </ng-template>
+                  <div formGroupName="businessInfo">
+                    <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                    <div class="field-config-list" formGroupName="fields">
+                  <!-- Field Row: Business Name (with constraints) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'name']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Business Name
+                        <nz-badge nzText="Constraints" [nzStyle]="{ backgroundColor: '#fa8c16', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'name'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'name']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['businessInfo', 'fields', 'name'], 'Business Name', 'withConstraints')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'name'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Legal Name (with constraints) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'legalName']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Legal Name
+                        <nz-badge nzText="Constraints" [nzStyle]="{ backgroundColor: '#fa8c16', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'legalName'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'legalName']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['businessInfo', 'fields', 'legalName'], 'Legal Name', 'withConstraints')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'legalName'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Phone (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'phone']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Phone
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'phone'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'phone']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'phone'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Email (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'email']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Email
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'email'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'email']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'email'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Website (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'website']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Website
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'website'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'website']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'website'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: TIN (with constraints) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'tin']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        TIN
+                        <nz-badge nzText="Constraints" [nzStyle]="{ backgroundColor: '#fa8c16', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'tin'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'tin']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['businessInfo', 'fields', 'tin'], 'TIN', 'withConstraints')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'tin'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: TIN Type (with enum) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'tinType']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        TIN Type
+                        <nz-badge nzText="Enum" [nzStyle]="{ backgroundColor: '#1890ff', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'tinType'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'tinType']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['businessInfo', 'fields', 'tinType'], 'TIN Type', 'withEnum')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'tinType'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Business Type (with enum) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'businessType']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Business Type
+                        <nz-badge nzText="Enum" [nzStyle]="{ backgroundColor: '#1890ff', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'businessType'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'businessType']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['businessInfo', 'fields', 'businessType'], 'Business Type', 'withEnum')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'businessType'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Industry (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'industry']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Industry
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'industry'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'industry']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'industry'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: MCC (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'mcc']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        MCC
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'mcc'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'mcc']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'mcc'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Date Established (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'dateEstablished']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Date Established
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'dateEstablished'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'dateEstablished']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'dateEstablished'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Customer Service Phone (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'fields', 'customerServicePhone']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Customer Service Phone
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'fields', 'customerServicePhone'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'fields', 'customerServicePhone']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'fields', 'customerServicePhone'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div class="field-config-list" formGroupName="attachments">
+                  <!-- Field Row: Determination Letter 501(c)(3) (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'attachments', 'determinationLetter501c3']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Determination Letter 501(c)(3)
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'attachments', 'determinationLetter501c3'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'attachments', 'determinationLetter501c3']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'attachments', 'determinationLetter501c3'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Form 990 (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'businessInfo', 'attachments', 'form990']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Form 990
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['businessInfo', 'attachments', 'form990'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['businessInfo', 'attachments', 'form990']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['businessInfo', 'attachments', 'form990'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+                  </div>
+                </nz-collapse-panel>
+
+                <!-- Owners Panel -->
+                <nz-collapse-panel [nzHeader]="ownersHeader" [nzActive]="!collapsedSections.has('owners')" [nzExtra]="ownersExtra" (nzActiveChange)="toggleSection('owners')">
+                  <ng-template #ownersHeader>
+                    <span nz-icon nzType="team" style="margin-right: 8px;"></span>
+                    Owners Fields
+                  </ng-template>
+                  <ng-template #ownersExtra>
+                    <span style="color: #8c8c8c; font-size: 13px;">{{ getEnabledFieldCount(['customFormFields', 'owners']) }} enabled</span>
+                  </ng-template>
+                  <div formGroupName="owners">
+                    <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                    <div class="field-config-list" formGroupName="fields">
+                  <!-- Field Row: First Name (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'firstName']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        First Name
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'firstName'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'firstName']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'firstName'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Middle Name (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'middleName']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Middle Name
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'middleName'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'middleName']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'middleName'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Last Name (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'lastName']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Last Name
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'lastName'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'lastName']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'lastName'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Business Title (with constraints) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'businessTitle']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Business Title
+                        <nz-badge nzText="Constraints" [nzStyle]="{ backgroundColor: '#fa8c16', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'businessTitle'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'businessTitle']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['owners', 'fields', 'businessTitle'], 'Business Title', 'withConstraints')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'businessTitle'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Type (with enum) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'type']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Type
+                        <nz-badge nzText="Enum" [nzStyle]="{ backgroundColor: '#1890ff', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'type'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'type']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['owners', 'fields', 'type'], 'Type', 'withEnum')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'type'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Email (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'email']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Email
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'email'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'email']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'email'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Phone (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'phone']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Phone
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'phone'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'phone']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'phone'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Date of Birth (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'dob']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Date of Birth
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'dob'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'dob']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'dob'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Citizenship Country (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'citizenshipCountry']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Citizenship Country
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'citizenshipCountry'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'citizenshipCountry']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'citizenshipCountry'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: SSN (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'ssn']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        SSN
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'ssn'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'ssn']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'ssn'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: SSN Last 4 (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'ssnLast4']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        SSN Last 4
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'ssnLast4'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'ssnLast4']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'ssnLast4'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Ownership Percent (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'ownershipPercent']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Ownership Percent
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'ownershipPercent'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'ownershipPercent']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'ownershipPercent'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Ownership Date (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'ownershipDate']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Ownership Date
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'ownershipDate'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'ownershipDate']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'ownershipDate'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Primary Representative (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'primaryRepresentative']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Primary Representative
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'primaryRepresentative'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'primaryRepresentative']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'primaryRepresentative'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Significant Responsibility (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'significantResponsibility']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Significant Responsibility
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'significantResponsibility'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'significantResponsibility']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'significantResponsibility'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Politically Exposed (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'politicallyExposed']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Politically Exposed
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'politicallyExposed'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'politicallyExposed']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'politicallyExposed'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: DL Number (with constraints) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'driversLicenseNumber']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Driver&#39;s License Number
+                        <nz-badge nzText="Constraints" [nzStyle]="{ backgroundColor: '#fa8c16', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'driversLicenseNumber'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'driversLicenseNumber']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['owners', 'fields', 'driversLicenseNumber'], 'DL Number', 'withConstraints')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'driversLicenseNumber'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: DL State (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'driversLicenseState']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Driver&#39;s License State
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'driversLicenseState'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'driversLicenseState']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'driversLicenseState'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: DL Expiration (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'fields', 'driversLicenseExpiration']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Driver&#39;s License Expiration
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'fields', 'driversLicenseExpiration'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'fields', 'driversLicenseExpiration']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'fields', 'driversLicenseExpiration'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div class="field-config-list" formGroupName="attachments">
+                  <!-- Field Row: ID (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'attachments', 'id']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        ID
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'attachments', 'id'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'attachments', 'id']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'attachments', 'id'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: ID Front (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'attachments', 'idFront']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        ID Front
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'attachments', 'idFront'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'attachments', 'idFront']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'attachments', 'idFront'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: ID Back (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'attachments', 'idBack']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        ID Back
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'attachments', 'idBack'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'attachments', 'idBack']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'attachments', 'idBack'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Utility Bill (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'owners', 'attachments', 'utilityBill']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Utility Bill
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['owners', 'attachments', 'utilityBill'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['owners', 'attachments', 'utilityBill']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['owners', 'attachments', 'utilityBill'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+                  </div>
+                </nz-collapse-panel>
+
+                <!-- Banking Panel -->
+                <nz-collapse-panel [nzHeader]="bankingHeader" [nzActive]="!collapsedSections.has('banking')" [nzExtra]="bankingExtra" (nzActiveChange)="toggleSection('banking')">
+                  <ng-template #bankingHeader>
+                    <span nz-icon nzType="bank" style="margin-right: 8px;"></span>
+                    Banking Fields
+                  </ng-template>
+                  <ng-template #bankingExtra>
+                    <span style="color: #8c8c8c; font-size: 13px;">{{ getEnabledFieldCount(['customFormFields', 'banking']) }} enabled</span>
+                  </ng-template>
+                  <div formGroupName="banking">
+                    <h4 style="margin-bottom: 16px; color: #28364f;">Fields</h4>
+                    <div class="field-config-list" formGroupName="fields">
+                  <!-- Field Row: Account Number (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'account']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Account Number
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'account'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'account']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'account'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Routing Number (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'routing']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Routing Number
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'routing'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'routing']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'routing'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Account Type (with enum) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'accountType']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Account Type
+                        <nz-badge nzText="Enum" [nzStyle]="{ backgroundColor: '#1890ff', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'accountType'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'accountType']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['banking', 'fields', 'accountType'], 'Account Type', 'withEnum')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'accountType'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Account Name (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'accountName']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Account Name
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'accountName'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'accountName']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'accountName'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Name on Account (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'nameOnAccount']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Name on Account
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'nameOnAccount'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'nameOnAccount']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'nameOnAccount'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Country (with enum) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'country']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Country
+                        <nz-badge nzText="Enum" [nzStyle]="{ backgroundColor: '#1890ff', fontSize: '10px', padding: '0 6px' }" style="margin-left: 8px;"></nz-badge>
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'country'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'country']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                        <button nz-button nzType="link" nzSize="small" (click)="openFieldConfig(['banking', 'fields', 'country'], 'Country', 'withEnum')">
+                          <span nz-icon nzType="setting"></span> Advanced
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'country'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Primary Account (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'primaryAccount']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Primary Account
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'primaryAccount'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'primaryAccount']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'primaryAccount'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Has Disbursement History (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'fields', 'hasDisbursementHistory']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Has Disbursement History
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'fields', 'hasDisbursementHistory'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'fields', 'hasDisbursementHistory']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'fields', 'hasDisbursementHistory'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <nz-divider></nz-divider>
+
+                <h4 style="margin-bottom: 16px; color: #28364f;">Attachments</h4>
+                <div class="field-config-list" formGroupName="attachments">
+                  <!-- Field Row: Bank Statement (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'attachments', 'bankStatement']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Bank Statement
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'attachments', 'bankStatement'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'attachments', 'bankStatement']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'attachments', 'bankStatement'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Voided Check (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'banking', 'attachments', 'voidedCheck']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Voided Check
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['banking', 'attachments', 'voidedCheck'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['banking', 'attachments', 'voidedCheck']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['banking', 'attachments', 'voidedCheck'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+                  </div>
+                </nz-collapse-panel>
+
+                <!-- Attachments Panel -->
+                <nz-collapse-panel [nzHeader]="attachmentsHeader" [nzActive]="!collapsedSections.has('attachments')" [nzExtra]="attachmentsExtra" (nzActiveChange)="toggleSection('attachments')">
+                  <ng-template #attachmentsHeader>
+                    Attachments Fields
+                  </ng-template>
+                  <ng-template #attachmentsExtra>
+                    <span style="color: #8c8c8c; font-size: 13px;">{{ getEnabledFieldCount(['customFormFields', 'attachments']) }} enabled</span>
+                  </ng-template>
+                  <div formGroupName="attachments">
+                    <div class="field-config-list" formGroupName="attachments">
+                  <!-- Field Row: Business License (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'attachments', 'attachments', 'businessLicense']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Business License
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['attachments', 'attachments', 'businessLicense'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['attachments', 'attachments', 'businessLicense']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['attachments', 'attachments', 'businessLicense'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: SS-4 (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'attachments', 'attachments', 'ss4']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        SS-4
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['attachments', 'attachments', 'ss4'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['attachments', 'attachments', 'ss4']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['attachments', 'attachments', 'ss4'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Articles of Incorporation (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'attachments', 'attachments', 'articlesOfIncorporation']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Articles of Incorporation
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['attachments', 'attachments', 'articlesOfIncorporation'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['attachments', 'attachments', 'articlesOfIncorporation']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['attachments', 'attachments', 'articlesOfIncorporation'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Other (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'attachments', 'attachments', 'other']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Other
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['attachments', 'attachments', 'other'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['attachments', 'attachments', 'other']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['attachments', 'attachments', 'other'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Field Row: Proof of Employment (Basic) -->
+                  <div class="field-config-item" [formGroup]="$any(templateForm.get(['customFormFields', 'attachments', 'attachments', 'proofOfEmployment']))">
+                    <div class="field-config-row">
+                      <div class="field-name">
+                        Proof of Employment
+                      </div>
+                      <div class="field-actions">
+                        <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'" (ngModelChange)="hasUnsavedChanges = true"></nz-switch>
+                        <button nz-button nzType="link" nzSize="small" (click)="toggleSubtext(['attachments', 'attachments', 'proofOfEmployment'])">
+                          <span nz-icon [nzType]="isSubtextExpanded(['attachments', 'attachments', 'proofOfEmployment']) ? 'up' : 'down'"></span>
+                          Subtext
+                        </button>
+                      </div>
+                    </div>
+                    <div class="field-subtext-section" *ngIf="isSubtextExpanded(['attachments', 'attachments', 'proofOfEmployment'])" formGroupName="displayAttributes">
+                      <textarea nz-input formControlName="subText" placeholder="Add helper text..." rows="2" (ngModelChange)="hasUnsavedChanges = true"></textarea>
+                    </div>
+                  </div>
+                </div>
+                  </div>
+                </nz-collapse-panel>
+              </nz-collapse>
+            </nz-card>
+          </ng-container>
+
+          <!-- Configuration Drawer -->
+          <nz-drawer
+            [nzVisible]="drawerVisible"
+            [nzWidth]="560"
+            [nzTitle]="drawerTitle"
+            [nzPlacement]="'right'"
+            (nzOnClose)="closeFieldConfig()"
+          >
+            <ng-container *nzDrawerContent>
+              <div *ngIf="currentFieldConfig" [formGroup]="currentFieldConfig">
+                <!-- Display Toggle -->
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8" nzRequired>Display Field</nz-form-label>
+                  <nz-form-control [nzSpan]="16">
+                    <nz-switch formControlName="display" [nzCheckedChildren]="'Show'" [nzUnCheckedChildren]="'Hide'"></nz-switch>
+                    <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                      Toggle to show or hide this field on the form
+                    </div>
+                  </nz-form-control>
+                </nz-form-item>
+
+                <nz-divider></nz-divider>
+
+                <!-- Display Attributes -->
+                <div formGroupName="displayAttributes">
+                  <h4 style="margin-bottom: 16px;">Display Attributes</h4>
+
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="8">Subtext</nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                      <textarea nz-input formControlName="subText" placeholder="Helper text to display below the field" rows="3"></textarea>
+                      <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                        Optional helper text that appears below the field
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+
+                <!-- Field Constraints (only for withConstraints type) -->
+                <ng-container *ngIf="currentFieldType === 'withConstraints'">
+                  <nz-divider></nz-divider>
+                  <div formGroupName="fieldConstraints">
+                    <h4 style="margin-bottom: 16px;">Field Constraints</h4>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="8">Allow Alpha</nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                        <nz-switch formControlName="allowAlpha" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                        <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                          Allow alphabetic characters (A-Z, a-z)
+                        </div>
+                      </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="8">Allow Numeric</nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                        <nz-switch formControlName="allowNumeric" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                        <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                          Allow numeric characters (0-9)
+                        </div>
+                      </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="8">Allow Whitespace</nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                        <nz-switch formControlName="allowWhitespace" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                        <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                          Allow spaces and whitespace characters
+                        </div>
+                      </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="8">Special Characters</nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                        <input nz-input formControlName="allowedSpecialCharacters" placeholder="!&#64;#$%^*()-_," />
+                        <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                          Enter allowed special characters (e.g., !&#64;#$%^*()-_,)
+                        </div>
+                      </nz-form-control>
+                    </nz-form-item>
+
+                    <div nz-row [nzGutter]="16">
+                      <div nz-col [nzSpan]="12">
+                        <nz-form-item>
+                          <nz-form-label>Min Length</nz-form-label>
+                          <nz-form-control>
+                            <nz-input-number formControlName="minLength" [nzMin]="0" [nzMax]="1000" style="width: 100%;"></nz-input-number>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      <div nz-col [nzSpan]="12">
+                        <nz-form-item>
+                          <nz-form-label>Max Length</nz-form-label>
+                          <nz-form-control>
+                            <nz-input-number formControlName="maxLength" [nzMin]="1" [nzMax]="10000" style="width: 100%;"></nz-input-number>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- Enum Configuration (only for withEnum type) -->
+                <ng-container *ngIf="currentFieldType === 'withEnum'">
+                  <nz-divider></nz-divider>
+                  <div>
+                    <h4 style="margin-bottom: 16px;">Enum Options</h4>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="8">Options</nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                        <nz-select formControlName="enum" nzMode="tags" nzPlaceHolder="Enter options and press Enter" style="width: 100%;">
+                        </nz-select>
+                        <div style="margin-top: 4px; color: #8c8c8c; font-size: 12px;">
+                          Type an option and press Enter to add. These will appear as dropdown options in the form.
+                        </div>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </ng-container>
+
+                <!-- Footer Actions -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; border-top: 1px solid #f0f0f0; background: #fff;">
+                  <button nz-button nzType="primary" (click)="saveFieldConfig()" style="margin-right: 8px;">
+                    <span nz-icon nzType="save"></span> Save
+                  </button>
+                  <button nz-button (click)="closeFieldConfig()">Cancel</button>
+                </div>
+              </div>
+            </ng-container>
+          </nz-drawer>
+
+        </form>
+      </div>
+
+      <!-- Live Preview Panel -->
+      <div class="preview-panel" *ngIf="showPreview">
+        <div class="preview-header">
+          <h3>Live Preview</h3>
+          <button nz-button nzType="text" (click)="togglePreview()">
+            <span nz-icon nzType="close"></span>
+          </button>
+        </div>
+        <div class="preview-content">
+          <!-- Logo Preview -->
+          <div *ngIf="uploadedLogoUrl" class="preview-logo" [style.background-image]="'url(' + uploadedLogoUrl + ')'"></div>
+
+          <!-- Title Preview -->
+          <h1 class="preview-title" [style.color]="previewTitleColor">{{ previewTitle }}</h1>
+
+          <!-- Accent Bar Preview -->
+          <div class="preview-accent-bar" [style.background-color]="previewAccentColor"></div>
+
+          <!-- Button Preview -->
+          <button class="preview-button"
+                  [style.background-color]="previewButtonAccentColor"
+                  [style.color]="previewButtonTextColor">
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

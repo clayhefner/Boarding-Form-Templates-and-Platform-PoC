@@ -1,0 +1,59 @@
+.platform-container {
+  padding: 24px;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.header-left h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.header-left p {
+  margin: 0;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.table-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.reject-count {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.reject-count.high-rejects {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+/* Purple button styling */
+::ng-deep .platform-container .ant-btn-primary {
+  background-color: #4013BE;
+  border-color: #4013BE;
+}
+
+::ng-deep .platform-container .ant-btn-primary:hover {
+  background-color: #5a20d6;
+  border-color: #5a20d6;
+}
+
+::ng-deep .platform-container .ant-btn-primary:focus {
+  background-color: #4013BE;
+  border-color: #4013BE;
+}

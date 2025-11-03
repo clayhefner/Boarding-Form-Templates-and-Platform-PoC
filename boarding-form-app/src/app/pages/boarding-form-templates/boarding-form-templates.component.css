@@ -1,0 +1,42 @@
+.page-container {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.delete-action {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+nz-table {
+  background: #fff;
+}
+
+.vertical-dots {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1;
+}

@@ -1,0 +1,441 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-title-section">
+        <h1>{{ pageTitle }}</h1>
+        <div class="template-info" *ngIf="isEditMode">
+          <span class="template-id">ID: {{ platformId }}</span>
+          <span class="template-name">{{ platformForm.get('name')?.value || 'Untitled Platform' }}</span>
+        </div>
+      </div>
+      <span class="unsaved-indicator" *ngIf="hasUnsavedChanges">
+        <span nz-icon nzType="exclamation-circle" nzTheme="fill"></span>
+        Unsaved changes
+      </span>
+    </div>
+    <div class="header-actions">
+      <button nz-button nzType="default" (click)="onCancel()">
+        Cancel
+      </button>
+      <button nz-button nzType="primary" (click)="onSubmit()" [nzLoading]="isSaving">
+        <span nz-icon nzType="save" *ngIf="!isSaving"></span>
+        {{ isEditMode ? 'Update' : 'Save' }} Platform
+      </button>
+    </div>
+  </div>
+
+  <div class="form-content">
+    <form nz-form [formGroup]="platformForm" nzLayout="vertical">
+      <nz-tabset nzType="card" nzSize="large">
+
+        <!-- Business Info Tab -->
+        <nz-tab nzTitle="Business Info">
+          <div class="tab-content">
+
+            <!-- Business Information Card -->
+            <nz-card nzTitle="Business Information" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label nzRequired>Name</nz-form-label>
+                    <nz-form-control nzErrorTip="Please enter platform name">
+                      <input nz-input formControlName="name" placeholder="Enter platform name" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Business Legal Name</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="businessLegalName" placeholder="Enter business legal name" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Address Card -->
+            <nz-card nzTitle="Address" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Address</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="address" placeholder="Enter street address" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Address 2</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="address2" placeholder="Apt, Suite, etc. (optional)" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>City</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="city" placeholder="Enter city" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>Region / State</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="region" placeholder="Enter region or state" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>Postal Code</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postal" placeholder="Enter postal code" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Country</nz-form-label>
+                    <nz-form-control>
+                      <nz-select formControlName="country" nzPlaceHolder="Select country" nzShowSearch>
+                        <nz-option *ngFor="let country of countryOptions" [nzValue]="country.value" [nzLabel]="country.label"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Platform Contacts Card -->
+            <nz-card nzTitle="Platform Contacts" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Contact Name</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="contactName" placeholder="Enter contact name" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>Phone Number</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="phoneNumber" placeholder="Enter phone number" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+          </div>
+        </nz-tab>
+
+        <!-- Platform Settings Tab -->
+        <nz-tab nzTitle="Platform Settings">
+          <div class="tab-content">
+
+            <!-- Platform Configuration Card -->
+            <nz-card nzTitle="Platform Configuration" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>
+                      Test Platform Only
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Enable this for test/demo platforms only. Live platforms should use 'Test & Live' mode"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="Enable for test/demo platforms only">
+                      <nz-switch formControlName="isTestPlatform" [nzCheckedChildren]="'Test Only'" [nzUnCheckedChildren]="'Test & Live'"></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>
+                      Demo Platform
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Indicates if this platform is marked as a demo platform for testing and demonstration purposes"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="This is a read-only indicator">
+                      <nz-tag [nzColor]="platformForm.get('isDemoPlatform')?.value ? 'success' : 'default'" style="margin-top: 4px;">
+                        <span nz-icon [nzType]="platformForm.get('isDemoPlatform')?.value ? 'check-circle' : 'close-circle'" [nzTheme]="'fill'"></span>
+                        {{ platformForm.get('isDemoPlatform')?.value ? 'Yes' : 'No' }}
+                      </nz-tag>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>
+                      MCC Codes
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Merchant Category Codes that classify the types of businesses for this platform. Select one or more codes"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="Select one or more Merchant Category Codes">
+                      <nz-select
+                        formControlName="mccCodes"
+                        nzMode="multiple"
+                        nzPlaceHolder="Select MCC codes"
+                        nzShowSearch
+                        nzAllowClear>
+                        <nz-option *ngFor="let mcc of mccCodeOptions" [nzValue]="mcc.code" [nzLabel]="mcc.label"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Merchant Enrichment Card -->
+            <nz-card nzTitle="Merchant Enrichment" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>
+                      Auto Enrich Merchant Records
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Automatically enrich merchant records with additional business data from external sources"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="Enable automatic enrichment of merchant records">
+                      <nz-switch formControlName="autoEnrichMerchantRecords" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>
+                      Display Enrichment Data on Forms
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Show enriched merchant data on boarding forms for users to view and verify"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="Show enrichment data to users on forms">
+                      <nz-switch formControlName="displayEnrichmentDataOnForms" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+            <!-- Default Merchant Values Card -->
+            <nz-card nzTitle="Default Merchant Values" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="12">
+                  <nz-form-item>
+                    <nz-form-label>
+                      Default MCC Code
+                      <span nz-icon nzType="info-circle" nzTheme="fill"
+                            nz-tooltip
+                            nzTooltipTitle="Default Merchant Category Code that will be pre-populated for new merchants on this platform"
+                            style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
+                    </nz-form-label>
+                    <nz-form-control nzExtra="This MCC code will be used as default for new merchants">
+                      <nz-select formControlName="defaultMccCode" nzPlaceHolder="Select default MCC code" nzShowSearch nzAllowClear>
+                        <nz-option *ngFor="let mcc of mccCodeOptions" [nzValue]="mcc.code" [nzLabel]="mcc.label"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>Est. High Ticket</nz-form-label>
+                    <nz-form-control>
+                      <nz-input-number
+                        formControlName="estHighTicket"
+                        [nzMin]="0"
+                        [nzFormatter]="formatCurrency"
+                        nzPlaceHolder="Enter high ticket"
+                        style="width: 100%;">
+                      </nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>Est. Average Ticket</nz-form-label>
+                    <nz-form-control>
+                      <nz-input-number
+                        formControlName="estAverageTicket"
+                        [nzMin]="0"
+                        [nzFormatter]="formatCurrency"
+                        nzPlaceHolder="Enter average ticket"
+                        style="width: 100%;">
+                      </nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label>Est. Annual Sales Volume</nz-form-label>
+                    <nz-form-control>
+                      <nz-input-number
+                        formControlName="estAnnualSalesVolume"
+                        [nzMin]="0"
+                        [nzFormatter]="formatCurrency"
+                        nzPlaceHolder="Enter annual sales volume"
+                        style="width: 100%;">
+                      </nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <nz-form-item>
+                    <nz-form-label>Product / Service Description</nz-form-label>
+                    <nz-form-control nzExtra="Describe the typical products or services offered by merchants on this platform">
+                      <textarea
+                        nz-input
+                        formControlName="productServiceDescription"
+                        placeholder="Describe the products or services offered"
+                        rows="4">
+                      </textarea>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </nz-card>
+
+          </div>
+        </nz-tab>
+
+        <!-- Approved Domains Tab -->
+        <nz-tab nzTitle="Approved Domains">
+          <div class="tab-content">
+
+            <!-- Approved Domains Card -->
+            <nz-card nzTitle="Approved Domains" [nzBordered]="true" class="form-section">
+              <div nz-row [nzGutter]="16">
+                <div nz-col [nzSpan]="24">
+                  <p style="margin-bottom: 16px; color: #595959;">
+                    Manage the list of approved domains for this platform. Only requests from these domains will be allowed.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Add New Domain -->
+              <div nz-row [nzGutter]="16" style="margin-bottom: 16px;">
+                <div nz-col [nzSpan]="18">
+                  <nz-form-item>
+                    <nz-form-control nzErrorTip="Please enter a valid domain">
+                      <input
+                        nz-input
+                        [(ngModel)]="newDomain"
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Enter domain (e.g., example.com or https://example.com)"
+                        (keyup.enter)="addDomain()" />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="6">
+                  <button nz-button nzType="primary" (click)="addDomain()">
+                    <span nz-icon nzType="plus"></span>
+                    Add Domain
+                  </button>
+                </div>
+              </div>
+
+              <!-- Domains List -->
+              <div *ngIf="approvedDomains.length > 0" class="domains-list">
+                <div *ngFor="let domain of approvedDomains; let i = index" class="domain-item">
+                  <div class="domain-content">
+                    <span *ngIf="editingDomainIndex !== i" class="domain-url">
+                      <span nz-icon nzType="link" nzTheme="outline" style="margin-right: 8px; color: #4013BE;"></span>
+                      {{ domain }}
+                    </span>
+                    <input
+                      *ngIf="editingDomainIndex === i"
+                      nz-input
+                      [(ngModel)]="editingDomainValue"
+                      [ngModelOptions]="{standalone: true}"
+                      (keyup.enter)="saveDomainEdit(i)"
+                      (keyup.escape)="cancelDomainEdit()"
+                      style="flex: 1;" />
+                  </div>
+                  <div class="domain-actions">
+                    <button
+                      *ngIf="editingDomainIndex !== i"
+                      nz-button
+                      nzType="link"
+                      nzSize="small"
+                      (click)="editDomain(i)">
+                      <span nz-icon nzType="edit" nzTheme="outline"></span>
+                      Edit
+                    </button>
+                    <button
+                      *ngIf="editingDomainIndex === i"
+                      nz-button
+                      nzType="link"
+                      nzSize="small"
+                      (click)="saveDomainEdit(i)"
+                      style="color: #52c41a;">
+                      <span nz-icon nzType="check" nzTheme="outline"></span>
+                      Save
+                    </button>
+                    <button
+                      *ngIf="editingDomainIndex === i"
+                      nz-button
+                      nzType="link"
+                      nzSize="small"
+                      (click)="cancelDomainEdit()">
+                      <span nz-icon nzType="close" nzTheme="outline"></span>
+                      Cancel
+                    </button>
+                    <button
+                      *ngIf="editingDomainIndex !== i"
+                      nz-button
+                      nzType="link"
+                      nzSize="small"
+                      nzDanger
+                      (click)="deleteDomain(i)">
+                      <span nz-icon nzType="delete" nzTheme="outline"></span>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div *ngIf="approvedDomains.length === 0" class="empty-state">
+                <span nz-icon nzType="inbox" nzTheme="outline" style="font-size: 48px; color: #d9d9d9;"></span>
+                <p style="margin-top: 16px; color: #8c8c8c;">No approved domains yet. Add a domain to get started.</p>
+              </div>
+            </nz-card>
+
+          </div>
+        </nz-tab>
+
+      </nz-tabset>
+    </form>
+  </div>
+</div>

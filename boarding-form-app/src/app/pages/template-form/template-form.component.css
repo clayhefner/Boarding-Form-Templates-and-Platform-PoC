@@ -1,0 +1,846 @@
+/* Global Box Sizing */
+* {
+  box-sizing: border-box;
+}
+
+/* Purple Switch Styling */
+::ng-deep .ant-switch-checked {
+  background-color: #4013BE !important;
+}
+
+::ng-deep .ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background-color: #5a20d6 !important;
+}
+
+/* Purple Input Field Styling */
+::ng-deep .ant-input:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-input:focus,
+::ng-deep .ant-input-focused {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep .ant-input-number:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-input-number:focus,
+::ng-deep .ant-input-number-focused {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep textarea.ant-input:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep textarea.ant-input:focus {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+.page-container {
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 100;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.header-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'Open Sans', sans-serif;
+  color: #28364f;
+}
+
+.template-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.template-id {
+  color: #8c8c8c;
+  font-weight: 500;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.template-name {
+  color: #595959;
+  font-weight: 500;
+}
+
+.unsaved-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #faad14;
+  font-weight: 500;
+  padding: 4px 12px;
+  background: #fffbe6;
+  border-radius: 4px;
+  border: 1px solid #ffe58f;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.form-content {
+  padding-bottom: 40px;
+}
+
+/* Split Layout */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  max-width: 100%;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.split-layout.preview-hidden {
+  grid-template-columns: 1fr;
+}
+
+.form-editor {
+  overflow-x: hidden;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.preview-panel {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  max-height: calc(100vh - 140px);
+  background: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+}
+
+.preview-header {
+  background: #fafafa;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.preview-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #28364f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-content {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.preview-form {
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.preview-logo-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.preview-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: #bfbfbf;
+}
+
+.preview-logo {
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.preview-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 32px 0;
+}
+
+.preview-form-body {
+  margin-bottom: 24px;
+}
+
+.preview-field {
+  margin-bottom: 20px;
+}
+
+.preview-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #28364f;
+}
+
+.preview-field input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.preview-field input:focus {
+  outline: none;
+  border-color: #4013BE;
+}
+
+.preview-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.preview-button:hover {
+  opacity: 0.9;
+}
+
+.preview-footer {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.preview-footer small {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 24px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.section-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #595959;
+  margin-bottom: 16px;
+  margin-top: 4px;
+}
+
+:host ::ng-deep .form-section .ant-card {
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .form-section .ant-card-head {
+  background: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
+  border-radius: 8px 8px 0 0;
+}
+
+:host ::ng-deep .form-section .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #28364f;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:host ::ng-deep .form-section .ant-card-body {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Logo Upload Section */
+.logo-upload-section {
+  width: 100%;
+}
+
+.logo-preview-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.logo-preview-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.logo-preview-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.logo-preview-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-file-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #28364f;
+  font-weight: 500;
+}
+
+.logo-file-name .anticon {
+  color: #4013BE;
+  font-size: 16px;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload.ant-upload-drag {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload.ant-upload-drag:hover {
+  border-color: #4013BE;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload-drag-icon {
+  margin-bottom: 12px;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload-drag-icon .anticon {
+  font-size: 48px;
+  color: #4013BE;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload-text {
+  font-size: 16px;
+  color: #28364f;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+:host ::ng-deep .logo-upload-section .ant-upload-hint {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+/* Color Picker Improvements */
+.color-picker-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.color-input {
+  width: 60px !important;
+  height: 40px !important;
+  padding: 4px !important;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-input:hover {
+  border-color: #4013BE;
+}
+
+.hex-input {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+/* Form Styling */
+:host ::ng-deep .ant-row {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .ant-col {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep nz-form-item {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep nz-form-label {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #28364f;
+}
+
+:host ::ng-deep nz-form-label .anticon {
+  color: #8c8c8c;
+  margin-left: 4px;
+  cursor: help;
+}
+
+:host ::ng-deep nz-form-label .anticon:hover {
+  color: #4013BE;
+}
+
+:host ::ng-deep .ant-input-number {
+  width: 100%;
+}
+
+:host ::ng-deep .ant-switch {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+:host ::ng-deep .ant-switch-checked {
+  background-color: #4013BE !important;
+}
+
+:host ::ng-deep .ant-switch-checked:focus {
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2);
+}
+
+:host ::ng-deep .ant-divider {
+  margin: 24px 0;
+}
+
+
+/* Extra Styling */
+:host ::ng-deep .ant-form-item-extra {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-panel {
+    position: relative;
+    top: 0;
+    max-height: none;
+  }
+}
+
+/* Scrollbar Styling */
+.form-editor::-webkit-scrollbar,
+.preview-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-editor::-webkit-scrollbar-track,
+.preview-content::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.form-editor::-webkit-scrollbar-thumb,
+.preview-content::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 3px;
+}
+
+.form-editor::-webkit-scrollbar-thumb:hover,
+.preview-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Admin Section Styling */
+.admin-section {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease;
+  border-radius: 8px !important;
+}
+
+.admin-section:hover {
+  box-shadow: 0 4px 12px rgba(64, 19, 190, 0.12) !important;
+}
+
+:host ::ng-deep .admin-section .ant-card-head {
+  background: linear-gradient(135deg, #4013BE 0%, #5a20d6 100%) !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+:host ::ng-deep .admin-section .ant-card-head-title {
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .admin-section .ant-card-extra {
+  color: #ffffff !important;
+}
+
+/* Collapsible section styling */
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  user-select: none;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.admin-section-title:hover {
+  opacity: 0.9;
+}
+
+.admin-icon {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.admin-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+:host ::ng-deep .admin-badge .ant-badge-status-text {
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.custom-fields-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+:host ::ng-deep .admin-section .ant-card-body {
+  background: #ffffff;
+}
+
+/* Visual separator before admin sections */
+.admin-section:first-of-type {
+  margin-top: 32px;
+  position: relative;
+}
+
+.admin-section:first-of-type::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, #4013BE 0%, transparent 100%);
+}
+
+/* Field Configuration List Styles */
+.field-config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #f0f0f0;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.field-config-item {
+  background: #fff;
+}
+
+.field-config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fff;
+  transition: background-color 0.2s;
+}
+
+.field-config-row:hover {
+  background: #fafafa;
+}
+
+.field-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  flex: 1;
+}
+
+.field-name span[nz-icon] {
+  font-size: 16px;
+}
+
+.field-actions {
+  display: grid;
+  grid-template-columns: auto 85px 100px;
+  gap: 12px;
+  align-items: center;
+  min-width: 300px;
+}
+
+.field-actions nz-switch {
+  justify-self: end;
+}
+
+.field-config-row button {
+  font-size: 13px;
+  padding: 0 8px;
+  width: 100%;
+  white-space: nowrap;
+  border-radius: 6px;
+}
+
+:host ::ng-deep .field-config-row button.ant-btn-link {
+  color: #4013BE;
+}
+
+:host ::ng-deep .field-config-row button.ant-btn-link:hover {
+  color: #5a20d6;
+}
+
+:host ::ng-deep .field-config-row button.ant-btn-link .anticon {
+  color: #4013BE;
+}
+
+/* When only 2 items (no Advanced button), subtext button goes in middle column */
+.field-actions > :nth-child(2):last-child {
+  grid-column: 2;
+}
+
+.field-subtext-section {
+  padding: 0 16px 12px 16px;
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+
+.field-subtext-section textarea {
+  width: 100%;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+/* Global button border radius */
+:host ::ng-deep .ant-btn {
+  border-radius: 6px;
+}
+
+/* Input and form controls */
+:host ::ng-deep .ant-input,
+:host ::ng-deep .ant-input-number,
+:host ::ng-deep .ant-select-selector {
+  border-radius: 6px;
+}
+
+:host ::ng-deep .ant-switch {
+  border-radius: 100px;
+}
+
+/* Tooltip icon styling */
+:host ::ng-deep nz-form-label .anticon-info-circle {
+  color: #4013BE;
+  cursor: help;
+  margin-left: 4px;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+:host ::ng-deep nz-form-label .anticon-info-circle:hover {
+  opacity: 0.8;
+}
+
+/* Quick Setup Section */
+.quick-setup-section {
+  background: linear-gradient(135deg, #f6f5ff 0%, #ffffff 100%);
+  border: 2px solid #d3adf7 !important;
+}
+
+:host ::ng-deep .quick-setup-section .ant-card-body {
+  padding: 24px;
+}
+
+.quick-setup-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.quick-setup-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4013BE 0%, #5a20d6 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(64, 19, 190, 0.2);
+}
+
+.quick-setup-content {
+  flex: 1;
+}
+
+.connection-presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.preset-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.preset-card:hover {
+  border-color: #4013BE;
+  box-shadow: 0 2px 8px rgba(64, 19, 190, 0.1);
+  transform: translateY(-2px);
+}
+
+.preset-card.preset-selected {
+  border-color: #4013BE;
+  background: #f6f5ff;
+  box-shadow: 0 4px 12px rgba(64, 19, 190, 0.15);
+}
+
+.preset-radio {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.preset-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.preset-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 4px;
+}
+
+.preset-description {
+  font-size: 13px;
+  color: #8c8c8c;
+  line-height: 1.4;
+}
+
+.quick-setup-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.quick-setup-actions button {
+  min-width: 280px;
+}
+
+:host ::ng-deep .quick-setup-actions .ant-alert {
+  max-width: 600px;
+}

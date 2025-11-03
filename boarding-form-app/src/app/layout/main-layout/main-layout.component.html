@@ -1,0 +1,48 @@
+<nz-layout class="app-layout">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null">
+    <div class="sidebar-logo">
+      <h1>Boarding Forms</h1>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-menu-item nzMatchRouter>
+        <a routerLink="/boarding-form-templates">
+          <span nz-icon nzType="form" nzTheme="outline"></span>
+          <span>Form Templates</span>
+        </a>
+      </li>
+      <li nz-menu-item nzMatchRouter>
+        <a routerLink="/platform">
+          <span nz-icon nzType="cloud-server" nzTheme="outline"></span>
+          <span>Platform</span>
+        </a>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <span class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+        </span>
+        <div class="header-right">
+          <div class="role-toggle">
+            <span class="role-label" [class.active]="!isAdminMode">User</span>
+            <nz-switch [(ngModel)]="isAdminMode" (ngModelChange)="onRoleToggle()"></nz-switch>
+            <span class="role-label" [class.active]="isAdminMode">Admin</span>
+          </div>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

@@ -1,0 +1,363 @@
+/* Global Box Sizing */
+* {
+  box-sizing: border-box;
+}
+
+/* Page Container */
+.page-container {
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 100;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.header-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'Open Sans', sans-serif;
+  color: #28364f;
+}
+
+.template-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.template-id {
+  color: #8c8c8c;
+  font-weight: 500;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.template-name {
+  color: #595959;
+  font-weight: 500;
+}
+
+.unsaved-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #faad14;
+  font-weight: 500;
+  padding: 4px 12px;
+  background: #fffbe6;
+  border-radius: 4px;
+  border: 1px solid #ffe58f;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Form Content */
+.form-content {
+  padding-bottom: 40px;
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 24px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .form-section .ant-card {
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .form-section .ant-card-head {
+  background: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
+  border-radius: 8px 8px 0 0;
+}
+
+:host ::ng-deep .form-section .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #28364f;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:host ::ng-deep .form-section .ant-card-body {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Form Styling */
+:host ::ng-deep .ant-row {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .ant-col {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep nz-form-item {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep nz-form-label {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #28364f;
+}
+
+:host ::ng-deep nz-form-label .anticon {
+  color: #8c8c8c;
+  margin-left: 4px;
+  cursor: help;
+}
+
+:host ::ng-deep nz-form-label .anticon:hover {
+  color: #4013BE;
+}
+
+:host ::ng-deep .ant-input-number {
+  width: 100%;
+}
+
+:host ::ng-deep .ant-switch {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+:host ::ng-deep .ant-switch-checked {
+  background-color: #4013BE !important;
+}
+
+:host ::ng-deep .ant-switch-checked:focus {
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2);
+}
+
+:host ::ng-deep .ant-divider {
+  margin: 24px 0;
+}
+
+/* Extra Styling */
+:host ::ng-deep .ant-form-item-extra {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-top: 4px;
+}
+
+/* Purple button styling */
+::ng-deep .ant-btn-primary {
+  background-color: #4013BE;
+  border-color: #4013BE;
+}
+
+::ng-deep .ant-btn-primary:hover {
+  background-color: #5a20d6;
+  border-color: #5a20d6;
+}
+
+::ng-deep .ant-btn-primary:focus {
+  background-color: #4013BE;
+  border-color: #4013BE;
+}
+
+/* Tab styling */
+::ng-deep .ant-tabs-tab-active {
+  background-color: #f6f5ff !important;
+}
+
+::ng-deep .ant-tabs-tab:hover {
+  color: #4013BE;
+}
+
+::ng-deep .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #4013BE;
+}
+
+::ng-deep .ant-tabs-ink-bar {
+  background-color: #4013BE;
+}
+
+/* Tooltip icon styling */
+:host ::ng-deep nz-form-label .anticon-info-circle {
+  color: #4013BE;
+  cursor: help;
+  margin-left: 4px;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+:host ::ng-deep nz-form-label .anticon-info-circle:hover {
+  opacity: 0.8;
+}
+
+/* Approved Domains Styling */
+.domains-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.domain-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.domain-item:hover {
+  background: #f0f0f0;
+  border-color: #d9d9d9;
+}
+
+.domain-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.domain-url {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #262626;
+  display: flex;
+  align-items: center;
+  word-break: break-all;
+}
+
+.domain-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+/* Edit button purple styling */
+:host ::ng-deep .domain-actions .ant-btn-link:not(.ant-btn-dangerous) {
+  color: #4013BE;
+}
+
+:host ::ng-deep .domain-actions .ant-btn-link:not(.ant-btn-dangerous):hover {
+  color: #5a20d6;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+/* Purple Switch Styling */
+::ng-deep .ant-switch-checked {
+  background-color: #4013BE !important;
+}
+
+::ng-deep .ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background-color: #5a20d6 !important;
+}
+
+::ng-deep .ant-switch-checked:focus {
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2);
+}
+
+/* Purple Input Field Styling */
+::ng-deep .ant-input:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-input:focus,
+::ng-deep .ant-input-focused {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep .ant-input-number:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-input-number:focus,
+::ng-deep .ant-input-number-focused {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: #4013BE !important;
+}
+
+::ng-deep .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+::ng-deep textarea.ant-input:hover {
+  border-color: #4013BE !important;
+}
+
+::ng-deep textarea.ant-input:focus {
+  border-color: #4013BE !important;
+  box-shadow: 0 0 0 2px rgba(64, 19, 190, 0.2) !important;
+}
+
+/* Form label styling */
+::ng-deep nz-form-label {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #28364f;
+}
+
+/* Divider styling */
+::ng-deep .ant-divider {
+  margin: 24px 0;
+}

@@ -1,0 +1,65 @@
+<div class="platform-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h2>Platform Management</h2>
+      <p>Manage and monitor platform configurations</p>
+    </div>
+  </div>
+
+
+
+  <div class="table-container">
+    <nz-table
+      #platformTable
+      [nzData]="platforms"
+      [nzLoading]="isLoading"
+      [nzPageSize]="10"
+      [nzShowPagination]="true"
+      nzSize="middle">
+      <thead>
+        <tr>
+          <th>Platform ID</th>
+          <th>Platform Name</th>
+          <th>Platform Volume</th>
+          <th>Platform Transactions</th>
+          <th>Platform Rejects</th>
+          <th>Platform Connections</th>
+          <th>Demo Platform</th>
+          <th nzWidth="120px">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let platform of platformTable.data">
+          <td>{{ platform.id }}</td>
+          <td>
+            <strong>{{ platform.name }}</strong>
+          </td>
+          <td>{{ formatCurrency(platform.volume) }}</td>
+          <td>{{ formatNumber(platform.transactions) }}</td>
+          <td>
+            <span class="reject-count" [class.high-rejects]="platform.rejects > 50">
+              {{ formatNumber(platform.rejects) }}
+            </span>
+          </td>
+          <td>{{ formatNumber(platform.connections) }}</td>
+          <td>
+            <nz-tag [nzColor]="platform.isDemo ? 'success' : 'default'">
+              <span nz-icon [nzType]="platform.isDemo ? 'check-circle' : 'close-circle'" [nzTheme]="'fill'"></span>
+              {{ platform.isDemo ? 'Yes' : 'No' }}
+            </nz-tag>
+          </td>
+          <td>
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="small"
+              (click)="editPlatform(platform)">
+              <span nz-icon nzType="edit"></span>
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
