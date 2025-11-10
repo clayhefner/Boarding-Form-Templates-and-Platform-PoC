@@ -211,8 +211,9 @@
 
             <!-- Merchant Enrichment Card -->
             <nz-card nzTitle="Merchant Enrichment" [nzBordered]="true" class="form-section">
+              <!-- Auto Enrich Section -->
               <div nz-row [nzGutter]="16">
-                <div nz-col [nzSpan]="12">
+                <div nz-col [nzSpan]="24">
                   <nz-form-item>
                     <nz-form-label>
                       Auto Enrich Merchant Records
@@ -221,11 +222,26 @@
                             nzTooltipTitle="Automatically enrich merchant records with additional business data from external sources"
                             style="color: #4013BE; margin-left: 4px; cursor: help;"></span>
                     </nz-form-label>
-                    <nz-form-control nzExtra="Enable automatic enrichment of merchant records">
-                      <nz-switch formControlName="autoEnrichMerchantRecords" [nzCheckedChildren]="'Yes'" [nzUnCheckedChildren]="'No'"></nz-switch>
+                    <nz-form-control nzExtra="Configure automatic enrichment for each mode independently">
+                      <div style="display: flex; gap: 24px; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                          <label style="font-size: 12px; color: #8c8c8c; font-weight: 500;">Live Mode</label>
+                          <nz-switch formControlName="autoEnrichMerchantRecordsLive" [nzCheckedChildren]="'Enabled'" [nzUnCheckedChildren]="'Disabled'"></nz-switch>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                          <label style="font-size: 12px; color: #8c8c8c; font-weight: 500;">Test Mode</label>
+                          <nz-switch formControlName="autoEnrichMerchantRecordsTest" [nzCheckedChildren]="'Enabled'" [nzUnCheckedChildren]="'Disabled'"></nz-switch>
+                        </div>
+                      </div>
                     </nz-form-control>
                   </nz-form-item>
                 </div>
+              </div>
+
+              <nz-divider></nz-divider>
+
+              <!-- Display Enrichment Data Section -->
+              <div nz-row [nzGutter]="16">
                 <div nz-col [nzSpan]="12">
                   <nz-form-item>
                     <nz-form-label>
