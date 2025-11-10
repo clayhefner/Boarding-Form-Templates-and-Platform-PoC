@@ -16,6 +16,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 @Component({
   selector: 'app-platform-edit',
@@ -35,7 +36,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzDividerModule,
     NzCardModule,
     NzToolTipModule,
-    NzTagModule
+    NzTagModule,
+    NzAlertModule
   ],
   templateUrl: './platform-edit.component.html',
   styleUrl: './platform-edit.component.css'
